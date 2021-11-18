@@ -22,7 +22,7 @@ input-data-source: digital-globe
 # --- input-data-directory [PATH]-----------------------------------------------
 # Path to root of input data
 # ------------------------------------------------------------------------------
-input-directory: /Volumes/eadu/data/iceroad/raw/
+input-directory: data/iceroad/raw/
 
 # --- input-data-directory [PATH]-----------------------------------------------
 # Path (relative to `input-directory`)  with wildcard that defines any 
