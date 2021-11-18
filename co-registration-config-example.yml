@@ -1,0 +1,78 @@
+# ------------------------------------------------------------------------------
+# Example Config file for co-registration-utility
+# 
+#   This file follows yaml formatting with keys as described below
+#
+# ------------------------------------------------------------------------------
+
+# INPUT IMAGERY ----------------------------------------------------------------
+
+# --- input-file-table [PATH]---------------------------------------------------
+# Path to csv file with paths to input files
+# ------------------------------------------------------------------------------
+input-table-file: co-register-in.csv
+
+# --- input-column [STRING]-----------------------------------------------------
+# Column name that contains input file paths
+# ------------------------------------------------------------------------------
+input-column: 'clipped'
+
+
+# OPTIONS ----------------------------------------------------------------------
+
+# --- use-band [STRING] --------------------------------------------------------
+# name of band to use for multspectral imagery
+# ------------------------------------------------------------------------------
+use-band: nir1
+
+# --- window-size [int] --------------------------------------------------------
+# Window size for use in local reregistration algorithm
+# ------------------------------------------------------------------------------
+window-size: 256
+
+# --- max-shift [INT] ----------------------------------------------------------
+# Max shift in pixels
+# ------------------------------------------------------------------------------
+max-shift: 10
+
+# --- align_grids [BOOL] -------------------------------------------------------
+# Align grids during algorithm
+# ------------------------------------------------------------------------------
+align_grids: True
+
+# --- max-iterations [INT] -----------------------------------------------------
+# max iterations for algorithm
+# ------------------------------------------------------------------------------
+max-iterations: 1000
+
+# DEM --------------------------------------------------------------------------
+
+# --- reference-dem [BOOL]-------------------------------------------------------
+# If true co-register 'reference image' to dem first
+# ------------------------------------------------------------------------------
+reference-dem: True
+
+# --- dem [PATH]----------------------------------------------------------------
+# Path to DEM file used for ortho-rectification
+# ------------------------------------------------------------------------------
+dem: /Volumes/eadu/data/iceroad/arctic-dem/iceroad-dem.vrt
+
+
+# Output IMAGERY ---------------------------------------------------------------
+
+# --- clipped-directory [PATH]--------------------------------------------------
+# Path to save clipped data to 
+# ------------------------------------------------------------------------------
+output-directory: co-reg-data
+
+# --- output-tag [STRING] ----------------------------------------------
+# if vector-select-replacements used: Key in sql replacements to use as name
+# ------------------------------------------------------------------------------
+output-tag: co-reg
+
+# --- report-file [path]--------------------------------------------------------
+# Path to save a report csv file that maps the input files to the output files
+# ------------------------------------------------------------------------------
+report-file: co-reg-report.csv
+
+errors-file: co-reg-errors.txt

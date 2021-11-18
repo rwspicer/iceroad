@@ -1,0 +1,54 @@
+# ------------------------------------------------------------------------------
+# Example Config file for clipping-utility
+# 
+#   This file follows yaml formatting with keys as described below
+#
+# ------------------------------------------------------------------------------
+
+# INPUT IMAGERY ----------------------------------------------------------------
+
+# --- input-file-table [PATH]---------------------------------------------------
+# Path to csv file with paths to input files
+# ------------------------------------------------------------------------------
+input-table-file: orthorectification-report.csv
+
+# --- input-column [STRING]-----------------------------------------------------
+# Column name that contains input file paths
+# ------------------------------------------------------------------------------
+input-column: 'orthorectified'
+
+# --- vector-file [PATH] -------------------------------------------------------
+# Path to vector file with shapes to clip from input images
+# ------------------------------------------------------------------------------
+vector-file: 'Nuiqsut_InSAR_AOI.kml'
+
+# --- vector-select-sql [STRING] -----------------------------------------------
+# Sql statement to select feature from input vector
+# ------------------------------------------------------------------------------
+vector-select-sql: "SELECT * FROM Nuiqsut_InSAR_AOI WHERE Name = '{name:d}'"
+
+# --- vector-select-sql [LIST OF DICTS] ----------------------------------------
+# Replacements to insert into the sql select string
+# ------------------------------------------------------------------------------
+vector-select-replacements:
+  - name: 1
+  - name: 2
+  - name: 3
+
+# INPUT IMAGERY ----------------------------------------------------------------
+
+# --- clipped-directory [PATH]--------------------------------------------------
+# Path to save clipped data to 
+# ------------------------------------------------------------------------------
+clipped-directory: clipped-data
+
+# --- clipped-sub-dir-id [STRING] ----------------------------------------------
+# if vector-select-replacements used: Key in sql replacements to use as name
+# ------------------------------------------------------------------------------
+clipped-sub-dir-id: name
+
+# --- report-file [path]--------------------------------------------------------
+# Path to save a report csv file that maps the input files to the output files
+# ------------------------------------------------------------------------------
+report-file: clipping-report.csv
+
