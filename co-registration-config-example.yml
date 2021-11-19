@@ -75,4 +75,7 @@ output-tag: co-reg
 # ------------------------------------------------------------------------------
 report-file: co-reg-report.csv
 
+# --- report-file [path]--------------------------------------------------------
+# A list of files where errors occurred during the co-registration process
+# ------------------------------------------------------------------------------
 errors-file: co-reg-errors.txt

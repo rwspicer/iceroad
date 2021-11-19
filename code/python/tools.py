@@ -1,3 +1,10 @@
+"""
+tools
+-----
+
+general utility functions
+"""
+
 from datetime import datetime
 from glob import glob
 import os
@@ -15,16 +22,23 @@ def digiglobe_find_date (p, pf):
         '%Y%b%d%H%M%S'
     )
 
+def get_band_num(color, satellite):
+    """Get the image band # from the color and satellite
 
-# def find(name, paths = ortho_paths):
-#     for path in ortho_paths:
-#         if name in path:
-#             return path
-#     return None
+    Parameters
+    ----------
+    color: string
+        color band name i.e. red, green, nir1
+    satellite: string
+        code for satellite (supports quickbird, geoeye 1 and worldview 2/3)
 
-def get_band_num(color, img_type):
-    print(img_type)
-    if img_type in ['qb', 'ge1', "QB02", '"QB02"', '"GE01"']:
+    Returns
+    -------
+    int 
+        the band number 1 - N
+    """
+    print(satellite)
+    if satellite in ['qb', 'ge1', "QB02", '"QB02"', '"GE01"']:
         return bands.qb_bands[color]
     else: #wv2 #wv3
         return bands.wv2_bands[color]
