@@ -36,7 +36,7 @@ input-sub-dir-format: iceroad_*
 # --- dem [PATH]----------------------------------------------------------------
 # Path to DEM file used for ortho-rectification
 # ------------------------------------------------------------------------------
-dem: /Volumes/eadu/data/iceroad/arctic-dem/iceroad-dem.vrt
+dem: arctic-dem/iceroad-dem.vrt
 
 
 # OTHER SETTING ----------------------------------------------------------------
