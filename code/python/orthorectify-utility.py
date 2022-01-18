@@ -26,7 +26,7 @@ with open(sys.argv[1], 'r') as fd:
 
 ## set up input
 raw_data_dir = config['input-directory']
-format = config['input-sub-dir-format']
+format = config['input-sub-dir-format'] if 'input-sub-dir-format' in config else None
 if config['input-data-source'] == 'digital-globe':
     swath_dirs = glob.glob(os.path.join(raw_data_dir,format,''))
 
@@ -43,9 +43,33 @@ if config['input-data-source'] == 'digital-globe':
         swath_obj['mul-tiffs-raw'] = sorted(glob.glob(
             '%s/[0-9]*/[0-9]*/*_MUL/*.TIF' % swath_obj['root-path']
         ))
+elif config['input-data-source'] == 'reflectance':
+    swath_dirs = glob.glob(os.path.join(raw_data_dir,'*','*.tif'))
+    # print(swath_dirs)
+    
 
+    
+    swath_dict = {}
+    for img in swath_dirs:
+        date = os.path.split((os.path.split(img)[0]))[-1]
+        date = datetime.strptime(date, '%Y%m%dT%H%M%S')
+        if date not in swath_dict:
+            swath_dict[date] = {
+                "root-path": img, 
+                'pan-tiffs-raw':[],
+                'mul-tiffs-raw':[],
+            }
+
+        f_name = os.path.split(img)[-1]
+        if 'pan' in f_name:
+            swath_dict[date]['pan-tiffs-raw'].append(img) 
+        if 'mul' in f_name:
+            swath_dict[date]['mul-tiffs-raw'].append(img) 
+
+  
+    
 else:
-    print ("'input-data-source' error, Only 'digital-globe' source is supported")   
+    print ("'input-data-source' error, Only 'digital-globe', and 'reflectance' sources are supported")   
     sys.exit()
 
 ## DEM set up
@@ -75,6 +99,7 @@ config['output-sub-directories'] = 'no' if \
 # Processing
 print ('Starting')
 for swath, swath_obj in swath_dict.items():
+
     print (swath.isoformat())
     for tif_type in ['mul-tiffs-raw', 'pan-tiffs-raw']:
         # print(' ', tif_type)
@@ -82,15 +107,20 @@ for swath, swath_obj in swath_dict.items():
         
         swath_obj['%s-tiffs-corrected' % tif_type_short] = []
         for tif in swath_obj[tif_type]:
-            with open(tif.replace('TIF','ATT'), 'r') as fd:
-                att = att_file.load(fd)
+            try:
+                with open(tif.replace('TIF','ATT'), 'r') as fd:
+                    att = att_file.load(fd)
+            except:
+                att = {'satId': 'temp'}
 
 
 
-            
-            out_date = tools.digiglobe_find_date(
-                tif, '%s'
-            ).strftime('%Y%m%dT%H%M%S')
+            if config['input-data-source'] == 'digital-globe':
+                out_date = tools.digiglobe_find_date(
+                    tif, '%s'
+                ).strftime('%Y%m%dT%H%M%S')
+            else:
+                out_date = swath.strftime('%Y%m%dT%H%M%S')
             out_file = '%s-%s.tif' % (tif_type_short, out_date)
             print('  ',os.path.split(tif)[1], '->', out_file )
             if config['output-sub-directories'].lower() == 'no':
@@ -103,10 +133,11 @@ for swath, swath_obj in swath_dict.items():
                 except:
                     pass
                 out_path = os.path.join(out_dir, out_date, out_file)
+
             swath_obj['%s-tiffs-corrected' % tif_type_short].append(out_path)
             
-            
-            raster.orthorectify_rpc(tif, out_path, dem, out_crs)
+            if not os.path.exists(out_path):
+                raster.orthorectify_rpc(tif, out_path, dem, out_crs)
 
             ps = gdal.Info(
                 out_path, options=gdal.InfoOptions(format='json')

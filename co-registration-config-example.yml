@@ -10,7 +10,7 @@
 # --- input-file-table [PATH]---------------------------------------------------
 # Path to csv file with paths to input files
 # ------------------------------------------------------------------------------
-input-table-file: co-register-in.csv
+input-table-file: clipping-report.csv
 
 # --- input-column [STRING]-----------------------------------------------------
 # Column name that contains input file paths

@@ -10,6 +10,7 @@ which is licensed under the MIT License
 """
 from osgeo import gdal
 import numpy as np
+from numba import njit
 
 
 def load_raster (filename,  return_dataset = False):
@@ -151,3 +152,17 @@ def orthorectify_rpc(input, output, dem, crs):
         transformerOptions='RPC_DEM=%s' % dem
     )  
     return gdal.Warp(output, input, options= warp_options)
+
+@njit(parallel=True)
+def absolute_radiometric_calibration(
+        data, gain,offset, abs_cal_factor, effective_bandwidth, 
+    ):
+    """"""
+    return gain*data*(abs_cal_factor/effective_bandwidth) + offset
+
+@njit(parallel=True)
+def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
+    """
+    """
+    ref = (radiance * (dist_earth_sun**2) * np.pi)/ (irradiance * np.cos(theta))
+    return ref

@@ -1,0 +1,52 @@
+# ------------------------------------------------------------------------------
+# Example Config file for calibration-utility
+# 
+#   This file follows yaml formatting with keys as described below
+#
+# ------------------------------------------------------------------------------
+
+
+
+# --- input-data-source [STRING]------------------------------------------------
+# Input data source describes original source of data
+# Valid Values are:
+#   digital-globe - data supplied with this key has a directory structure that
+#     matches the format of data as downloaded from digital globe.
+#     With digital globe data rpc information is used in orthorctifcation
+# 
+# other data sources are not supported, this key was mostly included 
+# to help future proof the program.
+# ------------------------------------------------------------------------------
+input-data-source: digital-globe
+
+# --- input-data-directory [PATH]-----------------------------------------------
+# Path to root of input data
+# ------------------------------------------------------------------------------
+input-directory: iceroad/raw/
+
+# --- input-data-directory [PATH]-----------------------------------------------
+# Path (relative to `input-directory`)  with wildcard that defines any 
+# subdirectories that contain data.
+# ------------------------------------------------------------------------------
+input-sub-dir-format: iceroad_*
+
+
+# --- ignore-list [PATH] -------------------------------------------------------
+# path to a text file with a list of input raster files to ignore. 1 per line. 
+# ------------------------------------------------------------------------------
+ignore-list: ignore.txt
+
+
+# OUTPUTS ----------------------------------------------------------------------
+
+# --- orthorectified-directory [path]-------------------------------------------
+# Path to save output files
+# ------------------------------------------------------------------------------
+output-directory: iceroad/reflectance-data
+
+calc-reflectance: True
+
+# --- report-file [path]--------------------------------------------------------
+# Path to save a report csv file that maps the input files to the output files
+# ------------------------------------------------------------------------------
+report-file: dec-calibration-report.csv

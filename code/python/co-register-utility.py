@@ -82,20 +82,22 @@ if config['reference-dem']:
     print('Coregistering reference to DEM')
     idx = image_table[input_col] == reference
     dem = config['dem']
-    file_name = reference.split('.')[0]
+    file_name = os.path.split(reference)[1].split('.')[0]
     out_path = os.path.join(dest_path, '%s-%s.tif' % (dest_img_tag, file_name))
     
     
 
     print(out_path)
     if not os.path.exists(out_path):
+        # print('dne')
         crl = coreg.coregister_local(
                 dem, reference, out_path, 
                 1, target_band,
                 ws = window_size, max_shift = max_shift,
                 align_grids = align_grids , max_iter = max_iter
         )
-
+    else:
+        print ('Outfile file exists, Skipping')
     
     image_table.loc[idx,'co-registered-path'] = out_path
     reference = out_path
@@ -126,7 +128,7 @@ for target in target_images:
         target_band = 1
     print(target_band)
 
-    file_name = target.split('.')[0]
+    file_name = os.path.split(target)[1].split('.')[0]
     print('target file: ', target)
     if file_name == os.path.split(reference)[-1].split('.')[0]:
         print ('Target == Reference, skipping...')
@@ -136,27 +138,28 @@ for target in target_images:
     print('out file:', out_path)
     if os.path.exists(out_path):
         print('out file exitsts, skipping...')
+        image_table.loc[idx,'co-registered-path'] = out_path
         continue
 
-    # try:
-    crl = coreg.coregister_local(
-        reference, target_path, out_path, 
-        reference_band, target_band, 
-        ws = window_size, max_shift = max_shift,
-        align_grids = align_grids , max_iter = max_iter
-    )
-    image_table.loc[idx,'co-registered-path'] = out_path
+    try:
+        crl = coreg.coregister_local(
+            reference, target_path, out_path, 
+            reference_band, target_band, 
+            ws = window_size, max_shift = max_shift,
+            align_grids = align_grids , max_iter = max_iter
+        )
+        image_table.loc[idx,'co-registered-path'] = out_path
 
-    # except:
-    #     unsuccessful.add(file_name) 
-    #     print('coregister_local function failed:', file_name)
-    #     image_table.loc[idx,'co-registered-path']  = 'ERROR'
+    except:
+        unsuccessful.add(file_name) 
+        print('coregister_local function failed:', file_name)
+        image_table.loc[idx,'co-registered-path']  = 'ERROR: coregister_local function failed'
 
-    #     continue
-    # if not crl.coreg_info[ 'success' ]:
-    #     unsuccessful.add(file_name) 
-    #     image_table.loc[idx,'co-registered-path']  = 'ERROR'
-    #     print('coregistration process failed', file_name)
+        continue
+    if not crl.coreg_info[ 'success' ]:
+        unsuccessful.add(file_name) 
+        image_table.loc[idx,'co-registered-path']  = 'ERROR: coregistration process failed'
+        print('coregistration process failed', file_name)
 
 
 ## logging
