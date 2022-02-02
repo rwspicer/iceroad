@@ -51,7 +51,11 @@ if len(refs) > 1:
     print('Error: only specify at most 1 reference image')
     sys.exit()
 
-reference = refs[0] if len(refs) == 1 else target_images[0]
+if 'reference-override' in config:
+    reference = config['reference-override']
+else:
+    reference = refs[0] if len(refs) == 1 else target_images[0]
+
 print('Reference Image:', reference)
 
 print('Target images:')
@@ -66,10 +70,16 @@ max_shift = config['max-shift'] if 'max-shift' in config else 10
 align_grids = config['align_grids'] if 'align_grids' in config else True
 max_iter = config['max-iterations'] if 'max-iterations' in config else 1000
 
+print(image_table)
+if 'reference-override' in config:
+    
+    img_type = config['reference-override-type']
+    img_sat = config['reference-override-satellite']
+else:
+    idx = image_table[input_col] == reference
+    img_type = image_table['type'][idx].values[0]
+    img_sat = image_table['satellite'][idx].values[0]
 
-idx = image_table[input_col] == reference
-img_type = image_table['type'][idx].values[0]
-img_sat = image_table['satellite'][idx].values[0]
 print(img_sat)
 if img_type == 'multispectral':
     target_band = tools.get_band_num(cr_band,  img_sat)
@@ -104,9 +114,12 @@ if config['reference-dem']:
     
 
 else:
-    shutil.copy(reference, dest_path)
-    reference = os.path.split(reference)[-1]
-    reference = os.path.join(dest_path, reference)
+    try:
+        shutil.copy(reference, dest_path)
+        reference = os.path.split(reference)[-1]
+        reference = os.path.join(dest_path, reference)
+    except shutil.SameFileError:
+        pass
 
     
 ## get band no.      

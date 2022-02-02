@@ -166,3 +166,41 @@ def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
     """
     ref = (radiance * (dist_earth_sun**2) * np.pi)/ (irradiance * np.cos(theta))
     return ref
+
+
+def calc_norm_index(dataset, band_a_name, band_b_name):
+    """
+    """
+    band_a = dataset.GetRasterBand(band_a_name).ReadAsArray()
+    band_b = dataset.GetRasterBand(band_b_name).ReadAsArray()
+
+    return (band_a - band_b) /  (band_b + band_a)
+
+
+def save_raster(filename, data, transform, projection, 
+    datatype = gdal.GDT_Float32):
+    """Function Docs 
+    Parameters
+    ----------
+    filename: path
+        path to file to save
+    data: np.array like
+        2D array to save
+    transform: tuple
+        (origin X, X resolution, 0, origin Y, 0, Y resolution) 
+    projection: string
+        SRS projection in WTK format
+    datatype:
+        Gdal data type
+    
+    """
+    write_driver = gdal.GetDriverByName('GTiff') 
+    raster = write_driver.Create(
+        filename, data.shape[1], data.shape[0], 1, datatype
+    )
+    raster.SetGeoTransform(transform)  
+    outband = raster.GetRasterBand(1)  
+    outband.WriteArray(data) 
+    raster.SetProjection(projection) 
+    outband.FlushCache()  
+    raster.FlushCache()  
