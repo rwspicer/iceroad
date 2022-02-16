@@ -1,6 +1,6 @@
 # CHANEGLOG
 
-## [0.1.0] - 2022-02-15
+## [0.2.0] - 2022-02-15
 ### Added
 - Added changelog and versioning info
 - Added additional example files
@@ -12,6 +12,9 @@
 
 ### Fixed 
 - name of index-calculator-utility.py
+
+## [0.1.0]
+Initial version
 
 
 
