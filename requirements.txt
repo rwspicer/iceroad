@@ -3,3 +3,4 @@ gdal
 pyyaml
 pandas
 numpy
+numba

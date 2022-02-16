@@ -6,29 +6,33 @@
 # ------------------------------------------------------------------------------
 
 
-
 # --- input-data-source [STRING]------------------------------------------------
 # Input data source describes original source of data
 # Valid Values are:
-#   digital-globe - data supplied with this key has a directory structure that
+#   digital-globe:
+#     data supplied with this key has a directory structure that
 #     matches the format of data as downloaded from digital globe.
-#     With digital globe data rpc information is used in orthorctifcation
+#     With digital globe data rpc information is used in orthorectification
+#   reflectance:
+#     reflectance data output from radiometric-calibration-utility.py
 # 
 # other data sources are not supported, this key was mostly included 
 # to help future proof the program.
 # ------------------------------------------------------------------------------
-input-data-source: digital-globe
+input-data-source: reflectance
 
 # --- input-data-directory [PATH]-----------------------------------------------
 # Path to root of input data
 # ------------------------------------------------------------------------------
-input-directory: data/iceroad/raw/
+input-directory: data/iceroad/reflectance-data/
 
 # --- input-data-directory [PATH]-----------------------------------------------
 # Path (relative to `input-directory`)  with wildcard that defines any 
 # subdirectories that contain data.
+# 
+# Can be omitted if input-data-source is reflectance
 # ------------------------------------------------------------------------------
-input-sub-dir-format: iceroad_*
+# input-sub-dir-format: iceroad_*
 
 
 # DEM --------------------------------------------------------------------------

@@ -157,19 +157,70 @@ def orthorectify_rpc(input, output, dem, crs):
 def absolute_radiometric_calibration(
         data, gain,offset, abs_cal_factor, effective_bandwidth, 
     ):
-    """"""
+    """Calculates the absolute radiometric calibration of data
+    see https://dg-cms-uploads-production.s3.amazonaws.com/uploads/document/file/209/ABSRADCAL_FLEET_2016v0_Rel20170606.pdf
+    for digital globe data
+
+    Parameters 
+    ----------
+    data: np.array
+        image data
+    gain: number 
+        gain value see document above
+    offset: number
+        offset value see document above
+    abs_cal_factor: number
+        calibration factor pulled from image metadata
+    effective_bandwidth:
+        calibration bandwidth pulled from image metadata
+
+    Retruns
+    -------
+    radiometrically corrected image data correct
+    """
     return gain*data*(abs_cal_factor/effective_bandwidth) + offset
 
 @njit(parallel=True)
 def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
-    """
+    """Calculate the Top-of-Atmosphere reflectance for digital globe data
+    see: https://dg-cms-uploads-production.s3.amazonaws.com/uploads/document/file/209/ABSRADCAL_FLEET_2016v0_Rel20170606.pdf    
+
+    Parameters
+    ----------
+    radiance: Array
+        input image data absolute radiometric radiance value 
+    dist_earth_sun: Number
+        Earth sun distance
+    irradiance: Number
+        Irradiance - see table 4 in document linked above
+    theta:
+        solar zenith angle
+
+    Returns
+    -------
+    Reflectance data
     """
     ref = (radiance * (dist_earth_sun**2) * np.pi)/ (irradiance * np.cos(theta))
     return ref
 
 
 def calc_norm_index(dataset, band_a_name, band_b_name):
-    """
+    """Calculate a normalized index such as NDVI acording to the 
+    equation: 
+
+        NDVI = (band_a - band b)/(band_a + band_b)
+
+    Parameters
+    ----------
+    dataset: GDAL.dataset
+        multispectral raster dataset
+    band_a_num: str
+    band_b_num: str
+        band numbers to use in calculating index
+
+    Returns
+    -------
+    Index values
     """
     band_a = dataset.GetRasterBand(band_a_name).ReadAsArray()
     band_b = dataset.GetRasterBand(band_b_name).ReadAsArray()

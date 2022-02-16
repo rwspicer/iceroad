@@ -49,11 +49,20 @@ def get_band_num(color, satellite):
 
 
 def calc_julian_days_dg(tlc_time):
-    tlc_time = datetime.strptime(
-        tlc_time,
-        '%Y-%m-%dT%H:%M:%S.%f%z'
-    )
-    print(tlc_time)
+    """Calculate the Julida dayys according to the fomula provided by
+    DigitalGlobe. Found in section 4.1.2 
+    here https://dg-cms-uploads-production.s3.amazonaws.com/uploads/document/file/207/Radiometric_Use_of_WorldView-3_v2.pdf
+
+    Parameters
+    ----------
+    tlc_time: datetime.datetime
+
+    Returns
+    -------
+    int:
+        days since the beginning of the year -4712 
+        Meuss, Jean. "Astronomical algorithms, 2nd Ed.." Richmond, VA: Willmann-Bell(1998). Pg 61
+    """
     a = tlc_time.year//100 
     b = 2 - a + a // 4
     UT = tlc_time.hour + tlc_time.minute/60 + (tlc_time.second+tlc_time.microsecond)/3600
@@ -63,6 +72,18 @@ def calc_julian_days_dg(tlc_time):
     return jd
 
 def calc_dist_sun_earth_au(jd):
+    """Caclulate the earth sun distance in AU. Found in section 4.1.2 
+    here https://dg-cms-uploads-production.s3.amazonaws.com/uploads/document/file/207/Radiometric_Use_of_WorldView-3_v2.pdf
+
+    Parameters
+    ----------
+    jd: int in julian days
+
+    Returns
+    -------
+    float
+        earth sun distance  in AU
+    """
     d = jd - 2451545.0
     g = 357.529 + 0.98560028 * d
     d_es = 1.00014 - 0.01671 * np.cos(g) - 0.00014*np.cos(2*g)

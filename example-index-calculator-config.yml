@@ -1,0 +1,45 @@
+# ------------------------------------------------------------------------------
+# Example Config file for index-calculator-utility
+# 
+#   This file follows yaml formatting with keys as described below
+#
+# ------------------------------------------------------------------------------
+
+# INPUT IMAGERY ----------------------------------------------------------------
+
+# --- input-file-table [PATH]---------------------------------------------------
+# Path to csv file with paths to input files
+# ------------------------------------------------------------------------------
+input-table-file: co-reg-report-radio-1.csv
+
+# --- input-column [STRING]-----------------------------------------------------
+# Column name that contains input file paths
+# ------------------------------------------------------------------------------
+input-column: co-registered-path
+
+
+# OPTIONS ----------------------------------------------------------------------
+
+# --- index [STRING]------------------------------------------------------------
+# Must be NDVI or NDWI. Name of index to calculate. 
+# ------------------------------------------------------------------------------
+index: NDVI
+
+# Output IMAGERY ---------------------------------------------------------------
+
+# --- clipped-directory [PATH]--------------------------------------------------
+# Path to save results to 
+# ------------------------------------------------------------------------------
+output-directory: data/iceroad/radio-NDVI
+
+# --- output-tag [STRING] ------------------------------------------------------
+# Tag to add to output files with
+# ------------------------------------------------------------------------------
+output-tag: NDVI
+
+# --- report-file [path]--------------------------------------------------------
+# Path to save a report csv file that maps the input files to the output files
+# ------------------------------------------------------------------------------
+report-file: NDVI-report-radio-1.csv
+
+

@@ -118,11 +118,17 @@ for swath, swath_obj in swath_dict.items():
                 shutil.copy(in_temp, out_temp)
             
             swath_obj['%s-tiffs-corrected' % tif_type_short].append(out_path)
+
+            tlc_time = datetime.strptime(
+                imd_meta['IMAGE_1']['TLCTime'],
+                '%Y-%m-%dT%H:%M:%S.%f%z'
+            )
+            print(tlc_time)
             
-            jd = tools.calc_julian_days_dg(imd_meta['IMAGE_1']['TLCTime'])
+            jd = tools.calc_julian_days_dg(tlc_time)
             dist_earth_sun = tools.calc_dist_sun_earth_au(jd)
             
-        
+            ## see https://dg-cms-uploads-production.s3.amazonaws.com/uploads/document/file/209/ABSRADCAL_FLEET_2016v0_Rel20170606.pdf
             theta = np.radians(90-float(imd_meta['IMAGE_1']['meanSunEl']))
 
             in_dataset = gdal.Open(tif, gdal.GA_ReadOnly)
