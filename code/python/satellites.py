@@ -1,4 +1,9 @@
+"""
+Satellites
+----------
 
+Name look up for satellites
+"""
 
 name_lookup = {
     'WV3': 'worldview-3',

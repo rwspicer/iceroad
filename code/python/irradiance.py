@@ -3,7 +3,7 @@
 thuilier_2003 = {
     'worldview-3': {
         'pan':      1574.41,
-        'costal':   1757.89,
+        'coastal':   1757.89,
         'blue':     2004.61,
         'green':    1830.18,
         'yellow':   1712.07,
@@ -22,7 +22,7 @@ thuilier_2003 = {
     },
     'worldview-2': {
         'pan':      1571.36,
-        'costal':   1773.81,
+        'coastal':   1773.81,
         'blue':     2007.27,
         'green':    1829.62,
         'yellow':   1701.85,

@@ -12,7 +12,7 @@ numbers = {
         'green': 3,
         'blue': 2,
         'nir1': 7,
-        'costal':1, ## TODO fix spelling
+        'coastal':1,
         'yellow':4,
         'rededge': 6,
         'nir2': 8,

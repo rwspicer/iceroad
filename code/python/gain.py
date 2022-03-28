@@ -3,7 +3,7 @@
 values = {
     'worldview-3': {
         'pan':      0.950,
-        'costal':   0.905,
+        'coastal':   0.905,
         'blue':     0.940,
         'green':    0.938,
         'yellow':   0.962,
@@ -22,7 +22,7 @@ values = {
     },
     'worldview-2': {
         'pan':      0.942,
-        'costal':   1.151,
+        'coastal':   1.151,
         'blue':     0.988,
         'green':    0.936,
         'yellow':   0.949,
