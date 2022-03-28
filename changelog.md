@@ -1,5 +1,15 @@
 # CHANEGLOG
 
+## [0.4.0] - 2022-03-28
+### added
+- clamping of reflectance values for index calculations
+- tools for calculation stats on a raster
+
+### fixes  
+- bug in julian calculation caused by missing brackets
+- bug in earth sun distance calculation caused by using degrees instead
+of radians in np.cos() calls
+
 ## [0.2.0] - 2022-02-15
 ### Added
 - Added changelog and versioning info
