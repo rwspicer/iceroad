@@ -34,7 +34,7 @@ def area_stats (area):
     dict 
         statistics
     """
-    return DataFrame(area.flatten()).describe().to_dict()
+    return DataFrame(area.flatten()).describe().to_dict()[0]
 
 def area_average_timeseries(data, dates, mean_col_name='mean'):
     """

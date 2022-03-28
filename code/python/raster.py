@@ -203,12 +203,32 @@ def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
     ref = (radiance * (dist_earth_sun**2) * np.pi)/ (irradiance * np.cos(theta))
     return ref
 
+def clamp_band(data, min, max ):
+    """clamp data in band between min an max
+
+    Parameters
+    ----------
+    data: np.array
+        band data
+    min: Number
+    max: Number
+        Min and max values to clam to
+
+    Returns
+    -------
+    np.array
+        band_data
+    """
+    data[data < min] = min
+    data[data > max] = max
+    return data
+
 
 def calc_norm_index(dataset, band_a_name, band_b_name):
     """Calculate a normalized index such as NDVI acording to the 
     equation: 
 
-        NDVI = (band_a - band b)/(band_a + band_b)
+        INDEX = (band_a - band b)/(band_a + band_b)
 
     Parameters
     ----------
@@ -222,8 +242,8 @@ def calc_norm_index(dataset, band_a_name, band_b_name):
     -------
     Index values
     """
-    band_a = dataset.GetRasterBand(band_a_name).ReadAsArray()
-    band_b = dataset.GetRasterBand(band_b_name).ReadAsArray()
+    band_a = clamp_band(dataset.GetRasterBand(band_a_name).ReadAsArray(), 0, 1)
+    band_b = clamp_band(dataset.GetRasterBand(band_b_name).ReadAsArray(), 0, 1)
 
     return (band_a - band_b) /  (band_b + band_a)
 
