@@ -1,7 +1,12 @@
 # CHANEGLOG
 
-## [0.4.0] - 2022-03-29
-### fixes  
+## [0.4.2] - 2022-03-29
+### added
+- License
+- Installation instructions 
+
+## [0.4.1] - 2022-03-29
+### fixed  
 - spelling of coastal in radiometric-calibration-utility.py
 - gdal imports
 
@@ -10,7 +15,7 @@
 - clamping of reflectance values for index calculations
 - tools for calculation stats on a raster
 
-### fixes  
+### fixed
 - bug in julian calculation caused by missing brackets
 - bug in earth sun distance calculation caused by using degrees instead
 of radians in np.cos() calls
