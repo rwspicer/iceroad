@@ -13,7 +13,7 @@ import glob
 from datetime import datetime
 
 import yaml
-import gdal
+from osgeo import gdal
 from pandas import DataFrame, read_csv
 import numpy as np
 
@@ -101,6 +101,7 @@ for swath, swath_obj in swath_dict.items():
                 pass
             out_path = os.path.join(out_dir_current, out_file)
             if os.path.exists(out_path):
+                print('result file exists skipping!')
                 continue
 
             exts = [

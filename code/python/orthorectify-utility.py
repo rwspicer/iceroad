@@ -13,7 +13,7 @@ import glob
 from datetime import datetime
 
 import yaml
-import gdal
+from osgeo import gdal
 from pandas import DataFrame
 
 import tools

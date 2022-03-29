@@ -8,7 +8,7 @@ def loads(text):
         "BAND_G": 'green',
         "BAND_R": 'red',
         "BAND_N": 'nir1',
-        'BAND_C': 'costal',
+        'BAND_C': 'coastal',
         'BAND_Y': 'yellow',
         'BAND_RE': 'rededge',
         'BAND_N2': 'nir2',
