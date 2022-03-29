@@ -2,6 +2,15 @@
 
 Code and docs for the Ice Road project.
 
+## Installtion instruuctions
+
+Install packages in `reqirements.txt` 
+
+I would reccomend doing this within an environment using the [conda package manager](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html):
+
+`conda create -c conda-forge --name iceroad arosics gdal pandas numpy numba pyyaml` 
+
+
 ## Image Processing
 
 Satellite images were processed according the following steps:
