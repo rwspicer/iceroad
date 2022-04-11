@@ -12,20 +12,23 @@ import bands
 import satellites
 import numpy as np
 
-def digiglobe_find_date (p, pf):
+def digiglobe_find_date (date_path):
     """get the date from a digital globe path
     
     Parameters
     ----------
-    p: path 
-        path to a image file with path format from digital globe compressed data
-    pf: str
-        use '%s'
+    date_path: path 
+        path location with files that match the date format
 
     
     """
+    try:
+        date_file = glob(date_path)[0]
+    except IndexError:
+        raise FileNotFoundError('No files were found at the location provided')
+    
     return datetime.strptime(
-        '20' + os.path.split(glob(pf % p)[0])[1].split('-')[0],
+        '20' + os.path.split(date_file)[1].split('-')[0],
         '%Y%b%d%H%M%S'
     )
 

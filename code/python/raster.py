@@ -178,7 +178,7 @@ def absolute_radiometric_calibration(
     -------
     radiometrically corrected image data correct
     """
-    return gain*data*(abs_cal_factor/effective_bandwidth) + offset
+    return gain * data * (abs_cal_factor/effective_bandwidth) + offset
 
 @njit(parallel=True)
 def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
