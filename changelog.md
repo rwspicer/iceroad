@@ -1,5 +1,9 @@
 # CHANEGLOG
 
+## [0.5.1] - 2022-04-15
+### fixed
+-  fixes'_' that should have been '-' in code
+
 ## [0.5.0] - 2022-04-15
 ### added
 - manual inputs methods for radiometric calibration 
@@ -33,7 +37,7 @@ of radians in np.cos() calls
 ### Added
 - Added changelog and versioning info
 - Added additional example files
-
+example-calibration-config-manual-input.yml
 ### Changed
 - names of example files
 - updated readme to reflect added utilities

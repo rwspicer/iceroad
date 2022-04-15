@@ -239,49 +239,49 @@ if config['input-data-source'] == 'digital-globe':
 elif config['input-data-source'] == 'manual-entry':
     for img_dict in config['image-data']:
         print (img_dict['date'])
-        if os.path.exists(img_dict['output_path']):
+        if os.path.exists(img_dict['output-path']):
             print('result file exists skipping!')
             continue
 
-        output_directory = os.path.split(img_dict['output_path'])[0]
+        output_directory = os.path.split(img_dict['output-path'])[0]
 
         try:
             os.makedirs(output_directory)
         except:
             pass
 
-        for mdf in img_dict['metadata_files']:
+        for mdf in img_dict['metadata-files']:
             temp = os.path.split(mdf)[1]
             shutil.copy(mdf, os.path.join(output_directory, temp))
        
         jd = tools.calc_julian_days_dg(img_dict['date'])
         dist_earth_sun = tools.calc_dist_sun_earth_au(jd)
         # Function does radian conversion
-        theta = 90-float(img_dict['sun_angle']) 
+        theta = 90-float(img_dict['sun-angle']) 
 
-        in_dataset = gdal.Open(img_dict['input_path'], gdal.GA_ReadOnly)
+        in_dataset = gdal.Open(img_dict['input-path'], gdal.GA_ReadOnly)
         write_driver = gdal.GetDriverByName('GTiff') 
         temp = write_driver.CreateCopy('./temp-rcu.tif', in_dataset, 0)
         if config['calc-reflectance']:
             # print('h')
             gdal.Translate(
-                img_dict['output_path'], 
+                img_dict['output-path'], 
                 temp, 
                 outputType=gdal.GDT_Float32
             )#, creationOptions=['COMPRESS=LZW',])
         else:
-            shutil.copy('./temp-rcu.tif', img_dict['output_path'])
+            shutil.copy('./temp-rcu.tif', img_dict['output-path'])
         del(temp)
         os.remove('./temp-rcu.tif')
-        out_dataset = gdal.Open(img_dict['output_path'], gdal.GA_Update)
+        out_dataset = gdal.Open(img_dict['output-path'], gdal.GA_Update)
 
 
         ## creat 'imd_meta' object
         imd_meta = {}
-        for key in img_dict['abs_cal_factor']:
+        for key in img_dict['abs-cal-factor']:
             imd_meta[key] = {
-                'absCalFactor': img_dict['abs_cal_factor'][key], 
-                'effectiveBandwidth':  img_dict['effective_bandwidth'][key]
+                'absCalFactor': img_dict['abs-cal-factor'][key], 
+                'effectiveBandwidth':  img_dict['effective-bandwidth'][key]
             }
 
         sat_name = satellites.name_lookup[img_dict['satellite']]
@@ -310,8 +310,8 @@ elif config['input-data-source'] == 'manual-entry':
         image_map.append({ 
             'date': datetime.strptime(img_dict['date'], '%Y%m%dT%H%M%S'),
             'type': 'multispectral' if img_dict['type'] == 'mul' else 'panchromatic',
-            'original': img_dict['input_path'],
-            out_col_name: img_dict['output_path'],
+            'original': img_dict['input-path'],
+            out_col_name: img_dict['output-path'],
             'satellite': img_dict['satellite'],
             # 'resolution': ps,
         }) 
