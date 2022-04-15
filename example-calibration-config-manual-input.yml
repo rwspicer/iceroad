@@ -1,0 +1,86 @@
+# ------------------------------------------------------------------------------
+# Example Config file for calibration-utility
+# 
+#   This file follows yaml formatting with keys as described below
+#
+# ------------------------------------------------------------------------------
+
+
+# --- input-data-source [STRING]------------------------------------------------
+# Input data source describes original source of data
+# Valid Values are:
+#   digital-globe - data supplied with this key has a directory structure that
+#     matches the format of data as downloaded from digital globe.
+#     With digital globe data rpc information is used in orthorectification
+# 
+# other data sources are not supported, this key was mostly included 
+# to help future proof the program.
+# ------------------------------------------------------------------------------
+input-data-source: manual-entry
+
+# --- manual-input-data [DICT]--------------------------------------------------
+# Use if input-data-source: manual-entry
+# ------------------------------------------------------------------------------
+image-data:
+  - input-path: data/raw/mul-20161003T222102.TIF
+    output-path: data/reflectance/mul-ref-20161003T222102.TIF
+    metadata-files:
+      -  data/raw/mul-20161003T222102.IMD
+      -  data/raw/mul-20161003T222102.ATT
+      -  data/raw/mul-20161003T222102.RPB
+    date: '2016-10-03T22:20:50.323082' # TLCtime form IMD file
+    type: mul ## mul or pan for multspectral or panchromatic
+    satellite: 'WV02' # from ATT file
+    sun-angle: 15.3 # meanSunEl from IMD file
+    abs-cal-factor:  #absCalFactor values from IMD file per band
+      coastal: 9.094740e-03
+      blue: 7.280000e-03
+      green: 5.578950e-03
+      yellow: 5.018950e-03
+      red: 4.509470e-03
+      rededge:  4.475790e-03
+      nir1: 4.997890e-03
+      nir2:  8.884210e-03
+    effective-bandwidth:   #effectiveBandwidth values from IMD file per band
+      coastal:   4.730000e-02
+      blue:  5.430000e-02
+      green: 6.300000e-02
+      yellow: 3.740000e-02
+      red:  5.740000e-02
+      rededge: 3.930000e-02
+      nir1: 9.890000e-02
+      nir2: 9.960000e-02
+  - input-path: data/raw/pan-20161003T222102.TIF
+    output-path: data/reflectance/pan-ref-20161003T222102.TIF
+    metadata-files:
+      -  data/raw/pan-20161003T222102.IMD
+      -  data/raw/pan-20161003T222102.ATT
+      -  data/raw/pan-20161003T222102.RPB
+    date: '2016-10-03T22:20:50.323082' # TLCtime form IMD file
+    type: pan ## mul or pan for multspectral or panchromatic
+    satellite: 'WV02'  # from ATT file
+    sun-angle: 15.3 # meanSunEl from IMD file
+    abs-cal-factor: #absCalFactor values from IMD file per band
+      pan: 2.824471e-02  
+    effective-bandwidth:  #effectiveBandwidth values from IMD file per band
+      pan: 2.846000e-01
+
+
+# --- manual-date-in-format [STRING] -------------------------------------------
+# Date format for datetime.strptime to read dates in image-data
+# ------------------------------------------------------------------------------
+manual-date-in-format: '%Y-%m-%dT%H:%M:%S.%f'
+
+
+
+# --- calc-reflectance [BOOL]---------------------------------------------------
+# If True top of atmosphere reflectance is calculated and saved
+# If False top of atmosphere reflectance is NOT calculated and the resulting
+#   Data saved is the absolutely radiometric calibrated data
+# ------------------------------------------------------------------------------
+calc-reflectance: True
+
+# --- report-file [PATH]--------------------------------------------------------
+# Path to save a report csv file that maps the input files to the output files
+# ------------------------------------------------------------------------------
+report-file: calibration-report.csv

@@ -27,6 +27,47 @@ import satellites
 import bands
 
 
+def process_bands(band_dict, imd_meta, out_dataset, theta):
+    for band, num in band_dict.items():
+        print(band,num)
+        dn = in_dataset.GetRasterBand(num).ReadAsArray()
+        shape = (in_dataset.RasterYSize, in_dataset.RasterXSize)
+        loop_data = np.memmap('temp-rc-mempap.data', dtype=np.float32, shape=shape, mode='w+')
+        # times = timedelta()
+        for row in range(shape[0]):
+            # start = datetime.now()
+            loop_data[row] = raster.absolute_radiometric_calibration(
+                dn[row], 
+                gain.values[sat_name][band], 
+                offset.values[sat_name][band],
+                float(imd_meta[band]['absCalFactor']), 
+                float(imd_meta[band]['effectiveBandwidth'])
+            )
+            
+
+            if config['calc-reflectance']:
+                loop_data[row] = raster.calc_toa_reflectance(
+                    loop_data[row], 
+                    dist_earth_sun, 
+                    irradiance.thuilier_2003[sat_name][band], 
+                    theta
+                )
+            # dur = datetime.now() - start
+            # times += dur
+            # print('row %s' % row, 'time:', dur,  'avg time:', times/(row+1))
+
+            
+            gc.collect(1)
+            gc.collect(2)
+            gc.collect(0)
+            
+    
+        outband = out_dataset.GetRasterBand(num) 
+        outband.WriteArray(loop_data)  
+        outband.FlushCache()  
+        
+                
+
 
 
 # load config
@@ -68,8 +109,11 @@ else:
 
 
 ## files to skip
-with open(config['ignore-list'], 'r') as fd:
-    ignore_list = fd.read().split('\n')
+try:
+    with open(config['ignore-list'], 'r') as fd:
+        ignore_list = fd.read().split('\n')
+except:
+    ignore_list =  []
 
 # Set up output
 out_dir = config['output-directory']
@@ -80,11 +124,10 @@ image_map = []
 # # This could be improved
 # config['output-sub-directories'] = 'no' if \
 #     config['output-sub-directories'] == False else 'yes'
-# tif_ext = config['tif-ext' ] if 'tif-ext' in config else 'TIF'
-# imd_ext = config['imd-ext' ] if 'imd-ext' in config else 'IMD'
-# rpb_ext = config['rpb-ext' ] if 'rpb-ext' in config else 'RPB'
-# att_ext = config['att-ext' ] if 'att-ext' in config else 'ATT'
-
+tif_ext = 'TIF'
+imd_ext = 'IMD'
+rpb_ext = 'RPB'
+att_ext = 'ATT'
 
 # Processing
 print ('Starting')
@@ -105,9 +148,8 @@ if config['input-data-source'] == 'digital-globe':
                 with open(tif.replace(tif_ext,imd_ext), 'r') as fd:
                     imd_meta = imd_file.load(fd)
 
-                out_date = tools.digiglobe_find_date( # fix
-                    tif
-                ).strftime('%Y%m%dT%H%M%S')
+                out_date = tools.digiglobe_find_date(tif)\
+                                .strftime('%Y%m%dT%H%M%S')
                 out_file = '%s-%s.tif' % (tif_type_short, out_date)
                 print('  ',os.path.split(tif)[1], '->', out_file )
                 
@@ -168,53 +210,9 @@ if config['input-data-source'] == 'digital-globe':
                 if tif_type_short == 'pan':
                     band_dict = {'pan': 1}
                 
-                for band, num in band_dict.items():
-                    print(band,num)
-                    dn = in_dataset.GetRasterBand(num).ReadAsArray()
-                    shape = (in_dataset.RasterYSize, in_dataset.RasterXSize)
-                    loop_data = np.memmap('temp-rc-mempap.data', dtype=np.float32, shape=shape, mode='w+')
-                    for row in range(shape[0]):
-                        loop_data[row] = raster.absolute_radiometric_calibration(
-                            dn[row], 
-                            gain.values[sat_name][band], 
-                            offset.values[sat_name][band],
-                            float(imd_meta[band]['absCalFactor']), 
-                            float(imd_meta[band]['effectiveBandwidth'])
-                        )
-                        if config['calc-reflectance']:
-                            loop_data[row] = raster.calc_toa_reflectance(
-                                loop_data[row], 
-                                dist_earth_sun, 
-                                irradiance.thuilier_2003[sat_name][band], 
-                                theta
-                            )
-                        # print(loop_data[row])
-                        gc.collect(1)
-                        gc.collect(2)
-                        gc.collect(0)
-                        # radiance = raster.absolute_radiometric_calibration(
-                        #     dn, 
-                        #     gain.values[sat_name][band], 
-                        #     offset.values[sat_name][band],
-                        #     float(imd_meta[band]['absCalFactor']), 
-                        #     float(imd_meta[band]['effectiveBandwidth'])
-                        # )
-                        # if config['calc-reflectance']:
-                        #     reflectance = raster.calc_toa_reflectance(
-                        #         radiance, 
-                        #         dist_earth_sun, 
-                        #         irradiance.thuilier_2003[sat_name][band], 
-                        #         theta
-                        #     )
-                
-                    outband = out_dataset.GetRasterBand(num) 
-                    outband.WriteArray(loop_data)  
-                    # if config['calc-reflectance']:
-                    #     outband.WriteArray(reflectance) 
-                    # else:
-                    #     outband.WriteArray(radiance) 
-                    outband.FlushCache()  
-                    
+                # from datetime import datetime, timedelta
+                process_bands(band_dict, imd_meta, out_dataset, theta)
+             
                 out_dataset.FlushCache()
                 # print (out_dataset.GetDescription())
                 del(out_dataset)
@@ -259,7 +257,7 @@ elif config['input-data-source'] == 'manual-entry':
         jd = tools.calc_julian_days_dg(img_dict['date'])
         dist_earth_sun = tools.calc_dist_sun_earth_au(jd)
         # Function does radian conversion
-        theta = 90-float(img_dict['sun-angle']) 
+        theta = 90-float(img_dict['sun_angle']) 
 
         in_dataset = gdal.Open(img_dict['input_path'], gdal.GA_ReadOnly)
         write_driver = gdal.GetDriverByName('GTiff') 
@@ -278,41 +276,22 @@ elif config['input-data-source'] == 'manual-entry':
         out_dataset = gdal.Open(img_dict['output_path'], gdal.GA_Update)
 
 
-   
+        ## creat 'imd_meta' object
+        imd_meta = {}
+        for key in img_dict['abs_cal_factor']:
+            imd_meta[key] = {
+                'absCalFactor': img_dict['abs_cal_factor'][key], 
+                'effectiveBandwidth':  img_dict['effective_bandwidth'][key]
+            }
+
         sat_name = satellites.name_lookup[img_dict['satellite']]
 
         band_dict  = bands.numbers[sat_name]
         if img_dict['type'] == 'pan':
             band_dict = {'pan': 1}
         
-        for band, num in band_dict.items():
-            print(band,num)
-            dn = in_dataset.GetRasterBand(num).ReadAsArray()
-            shape = (in_dataset.RasterYSize, in_dataset.RasterXSize)
-            loop_data = np.memmap('temp-rc-mempap.data', dtype=np.float32, shape=shape, mode='w+')
-            for row in range(shape[0]):
-                loop_data[row] = raster.absolute_radiometric_calibration(
-                    dn[row], 
-                    gain.values[sat_name][band], 
-                    offset.values[sat_name][band],
-                    float(img_dict['abs_cal_factor']), 
-                    float(img_dict['effective_bandwidth'])
-                )
-                if config['calc-reflectance']:
-                    loop_data[row] = raster.calc_toa_reflectance(
-                        loop_data[row], 
-                        dist_earth_sun, 
-                        irradiance.thuilier_2003[sat_name][band], 
-                        theta
-                    )
-                # print(loop_data[row])
-                gc.collect(1)
-                gc.collect(2)
-                gc.collect(0)
-                
-            outband = out_dataset.GetRasterBand(num) 
-            outband.WriteArray(loop_data)  
-            outband.FlushCache()      
+
+        process_bands(band_dict, imd_meta, out_dataset, theta)    
         out_dataset.FlushCache()
         del(out_dataset)
         gc.collect(1)

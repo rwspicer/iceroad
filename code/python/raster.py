@@ -10,7 +10,7 @@ which is licensed under the MIT License
 """
 from osgeo import gdal
 import numpy as np
-from numba import njit
+from numba import jit
 
 
 def load_raster (filename,  return_dataset = False):
@@ -153,7 +153,7 @@ def orthorectify_rpc(input, output, dem, crs):
     )  
     return gdal.Warp(output, input, options= warp_options)
 
-@njit(parallel=True)
+@jit(nopython = True, parallel=True)
 def absolute_radiometric_calibration(
         data, gain,offset, abs_cal_factor, effective_bandwidth, 
     ):
@@ -180,7 +180,7 @@ def absolute_radiometric_calibration(
     """
     return gain * data * (abs_cal_factor/effective_bandwidth) + offset
 
-@njit(parallel=True)
+@jit(nopython = True, parallel=True)
 def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
     """Calculate the Top-of-Atmosphere reflectance for digital globe data
     see: https://dg-cms-uploads-production.s3.amazonaws.com/uploads/document/file/209/ABSRADCAL_FLEET_2016v0_Rel20170606.pdf    
@@ -200,10 +200,11 @@ def calc_toa_reflectance(radiance, dist_earth_sun, irradiance, theta):
     -------
     Reflectance data
     """
-    ref = (radiance * (dist_earth_sun**2) * np.pi)/ (irradiance * np.cos(theta))
+    ref = (radiance * (dist_earth_sun**2) * np.pi) / \
+          (irradiance * np.cos(np.radians(theta)))
     return ref
 
-def clamp_band(data, min, max ):
+def clamp_band(data, min, max):
     """clamp data in band between min an max
 
     Parameters
