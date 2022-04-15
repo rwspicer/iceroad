@@ -1,5 +1,13 @@
 # CHANEGLOG
 
+## [0.5.0] - 2022-04-15
+### added
+- manual inputs methods for radiometric calibration 
+
+### changed
+- moved all radian conversion to functions
+- updates readme
+
 ## [0.4.2] - 2022-03-29
 ### added
 - License
