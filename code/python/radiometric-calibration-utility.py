@@ -308,7 +308,7 @@ elif config['input-data-source'] == 'manual-entry':
 
 
         image_map.append({ 
-            'date': datetime.strptime(img_dict['date'], '%Y%m%dT%H%M%S'),
+            'date': img_dict['date'],
             'type': 'multispectral' if img_dict['type'] == 'mul' else 'panchromatic',
             'original': img_dict['input-path'],
             out_col_name: img_dict['output-path'],

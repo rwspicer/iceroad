@@ -1,5 +1,9 @@
 # CHANEGLOG
 
+## [0.5.2] - 2022-04-20
+### fixed
+- bug in saving dates
+
 ## [0.5.1] - 2022-04-15
 ### fixed
 -  fixes'_' that should have been '-' in code
