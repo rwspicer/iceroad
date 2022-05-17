@@ -125,7 +125,7 @@ def is_bad_data(dataset, bad_value = np.nan, band = 1):
     return False
 
 
-def orthorectify_rpc(input, output, dem, crs):
+def orthorectify_rpc(input, output, dem, crs, n_cpu='ALL_CPUS', use_multi=True, memory_limit=500):
     """orthorectify raster with RPC information using a dem 
 
     Parameters
@@ -143,13 +143,16 @@ def orthorectify_rpc(input, output, dem, crs):
     -------
     gdal.Dataset
     """
-
+    gdal.SetConfigOption('GDAL_CACHE_MAX', str(memory_limit))
     warp_options = gdal.WarpOptions(
         dstSRS = crs, 
         srcNodata = 0, 
         dstNodata=0, 
         rpc=True, 
-        transformerOptions='RPC_DEM=%s' % dem
+        transformerOptions='RPC_DEM=%s' % dem,
+        warpOptions=['NUM_THREADS=%s' % n_cpu,],
+        multithread=use_multi,
+        warpMemoryLimit=memory_limit
     )  
     return gdal.Warp(output, input, options= warp_options)
 

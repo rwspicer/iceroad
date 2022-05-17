@@ -22,6 +22,7 @@ import tools
 # import raster
 
 import coreg 
+import gc
 
 
 # load config
@@ -89,13 +90,14 @@ else:
 
 image_table['co-registered-path'] = np.nan
 if config['reference-dem']:
+    gc.collect(0),gc.collect(2),gc.collect(2)
     print('Coregistering reference to DEM')
     idx = image_table[input_col] == reference
     dem = config['dem']
     file_name = os.path.split(reference)[1].split('.')[0]
     out_path = os.path.join(dest_path, '%s-%s.tif' % (dest_img_tag, file_name))
     
-    
+    gc.collect(0),gc.collect(2),gc.collect(2)
 
     print(out_path)
     if not os.path.exists(out_path):
@@ -121,7 +123,7 @@ else:
     except shutil.SameFileError:
         pass
 
-    
+gc.collect(0),gc.collect(2),gc.collect(2)   
 ## get band no.      
 reference_band = target_band
 unsuccessful = set()
@@ -130,6 +132,7 @@ unsuccessful = set()
 ## coregister all
 for target in target_images:
     print('starting:', target)
+    gc.collect(0),gc.collect(2),gc.collect(2)
 
     idx = image_table[input_col] == target
     img_type = image_table['type'][idx].values[0]
@@ -153,7 +156,7 @@ for target in target_images:
         print('out file exitsts, skipping...')
         image_table.loc[idx,'co-registered-path'] = out_path
         continue
-
+    gc.collect(0),gc.collect(2),gc.collect(2)
     try:
         crl = coreg.coregister_local(
             reference, target_path, out_path, 
@@ -173,7 +176,7 @@ for target in target_images:
         unsuccessful.add(file_name) 
         image_table.loc[idx,'co-registered-path']  = 'ERROR: coregistration process failed'
         print('coregistration process failed', file_name)
-
+    gc.collect(0),gc.collect(2),gc.collect(2)
 
 ## logging
 with open(config['errors-file'], 'w' ) as fd:

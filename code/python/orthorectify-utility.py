@@ -20,6 +20,8 @@ import tools
 import raster
 import att_file
 
+from datetime import datetime, timedelta
+
 # load config
 with open(sys.argv[1], 'r') as fd:
     config = yaml.load(fd, Loader=yaml.Loader)
@@ -98,6 +100,8 @@ config['output-sub-directories'] = 'no' if \
 
 # Processing
 print ('Starting')
+total_time = timedelta()
+n_iters = 1
 for swath, swath_obj in swath_dict.items():
 
     print (swath.isoformat())
@@ -107,6 +111,7 @@ for swath, swath_obj in swath_dict.items():
         
         swath_obj['%s-tiffs-corrected' % tif_type_short] = []
         for tif in swath_obj[tif_type]:
+            start = datetime.now()
             try:
                 with open(tif.replace('TIF','ATT'), 'r') as fd:
                     att = att_file.load(fd)
@@ -133,6 +138,10 @@ for swath, swath_obj in swath_dict.items():
                 except:
                     pass
                 out_path = os.path.join(out_dir, out_date, out_file)
+            
+
+
+
 
             swath_obj['%s-tiffs-corrected' % tif_type_short].append(out_path)
             
@@ -151,6 +160,13 @@ for swath, swath_obj in swath_dict.items():
                 'satellite': att['satId'],
                 'resolution': ps,
             }) 
+            end = datetime.now()
+            elapsed = end - start
+            print('Current iteration timing: ',  elapsed)
+            total_time += elapsed
+            print('Average iteration timing:', total_time / n_iters)
+            n_iters += 1
+            # sys.exit()
             
 
 ## save report
