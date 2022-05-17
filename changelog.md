@@ -1,5 +1,18 @@
 # CHANEGLOG
 
+## [0.6.0] - 2022-05-17
+### adds
+- orthorectifcation utility can read input data from csv output by
+maunal input correction now
+
+### chnages
+- order of operations in manual input method to regenerate metadata files 
+if needed when out tiffs exist
+
+### fixes
+- fixes bug where metadata files are not renamed when copying in manual input
+radio corection utility
+
 ## [0.5.2] - 2022-04-20
 ### fixed
 - bug in saving dates

@@ -240,9 +240,7 @@ if config['input-data-source'] == 'digital-globe':
 elif config['input-data-source'] == 'manual-entry':
     for img_dict in config['image-data']:
         print (img_dict['date'])
-        if os.path.exists(img_dict['output-path']):
-            print('result file exists skipping!')
-            continue
+        
 
         output_directory = os.path.split(img_dict['output-path'])[0]
 
@@ -258,29 +256,6 @@ elif config['input-data-source'] == 'manual-entry':
             # sys.exit()
             temp = temp + '.' + ext
             shutil.copy(mdf, os.path.join(output_directory, temp))
-       
-        jd = tools.calc_julian_days_dg(img_dict['date'])
-        dist_earth_sun = tools.calc_dist_sun_earth_au(jd)
-        # Function does radian conversion
-        theta = 90-float(img_dict['sun-angle']) 
-
-        in_dataset = gdal.Open(img_dict['input-path'], gdal.GA_ReadOnly)
-        write_driver = gdal.GetDriverByName('GTiff') 
-        temp = write_driver.CreateCopy('./temp-rcu.tif', in_dataset, 0)
-        if config['calc-reflectance']:
-            # print('h')
-            gdal.Translate(
-                img_dict['output-path'], 
-                temp, 
-                outputType=gdal.GDT_Float32
-            )#, creationOptions=['COMPRESS=LZW',])
-        else:
-            shutil.copy('./temp-rcu.tif', img_dict['output-path'])
-        del(temp)
-        os.remove('./temp-rcu.tif')
-        out_dataset = gdal.Open(img_dict['output-path'], gdal.GA_Update)
-
-
         ## creat 'imd_meta' object
         imd_meta = {}
         for key in img_dict['abs-cal-factor']:
@@ -294,23 +269,43 @@ elif config['input-data-source'] == 'manual-entry':
         band_dict  = bands.numbers[sat_name]
         if img_dict['type'] == 'pan':
             band_dict = {'pan': 1}
-        
+            
+        if not os.path.exists(img_dict['output-path']):
+            
 
-        process_bands(band_dict, imd_meta, out_dataset, theta)    
-        out_dataset.FlushCache()
-        del(out_dataset)
-        gc.collect(1)
-        gc.collect(2)
-        gc.collect(0)
+            jd = tools.calc_julian_days_dg(img_dict['date'])
+            dist_earth_sun = tools.calc_dist_sun_earth_au(jd)
+            # Function does radian conversion
+            theta = 90-float(img_dict['sun-angle']) 
 
+            in_dataset = gdal.Open(img_dict['input-path'], gdal.GA_ReadOnly)
+            write_driver = gdal.GetDriverByName('GTiff') 
+            temp = write_driver.CreateCopy('./temp-rcu.tif', in_dataset, 0)
+            if config['calc-reflectance']:
+                # print('h')
+                gdal.Translate(
+                    img_dict['output-path'], 
+                    temp, 
+                    outputType=gdal.GDT_Float32
+                )#, creationOptions=['COMPRESS=LZW',])
+            else:
+                shutil.copy('./temp-rcu.tif', img_dict['output-path'])
+            del(temp)
+            os.remove('./temp-rcu.tif')
+            out_dataset = gdal.Open(img_dict['output-path'], gdal.GA_Update)
+            process_bands(band_dict, imd_meta, out_dataset, theta)    
+            out_dataset.FlushCache()
+            del(out_dataset)
+            gc.collect(1)
+            gc.collect(2)
+            gc.collect(0)
 
-
+        else:
+            print('result file exists skipping!')
+            
 
         out_col_name = 'reflectance' if config['calc-reflectance'] \
             else 'radiometric-calibrated'
-
-
-
 
         image_map.append({ 
             'date': img_dict['date'],

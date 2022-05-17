@@ -15,6 +15,9 @@
 #     With digital globe data rpc information is used in orthorectification
 #   reflectance:
 #     reflectance data output from radiometric-calibration-utility.py
+#   csv:
+#     use this method if manual-input method is used in 
+#     radiometric-calibration-utility.py 
 # 
 # other data sources are not supported, this key was mostly included 
 # to help future proof the program.
@@ -22,9 +25,11 @@
 input-data-source: reflectance
 
 # --- input-data-directory [PATH]-----------------------------------------------
-# Path to root of input data
+# Path to root of input data 
+#   or 
+# Path to csv file report from calibration utility
 # ------------------------------------------------------------------------------
-input-directory: data/iceroad/reflectance-data/
+input-data: data/iceroad/reflectance-data/
 
 # --- input-data-directory [PATH]-----------------------------------------------
 # Path (relative to `input-directory`)  with wildcard that defines any 
