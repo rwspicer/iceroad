@@ -59,7 +59,9 @@ def coregister_local(
         max_shift=max_shift,
         window_size =(ws,ws),
         grid_res= 200,
+        # CPUs=8
         )
+    # print('starting')
     crl.correct_shifts()
 
     return crl
