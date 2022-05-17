@@ -74,9 +74,10 @@ def process_bands(band_dict, imd_meta, out_dataset, theta):
 with open(sys.argv[1], 'r') as fd:
     config = yaml.load(fd, Loader=yaml.Loader)
 
-raw_data_dir = config['input-directory']
-format = config['input-sub-dir-format']
+
 if config['input-data-source'] == 'digital-globe':
+    raw_data_dir = config['input-directory'] if 'input-directory' in config else None
+    format = config['input-sub-dir-format']
     swath_dirs = glob.glob(os.path.join(raw_data_dir,format,''))
 
     swath_dict = {
@@ -251,7 +252,11 @@ elif config['input-data-source'] == 'manual-entry':
             pass
 
         for mdf in img_dict['metadata-files']:
-            temp = os.path.split(mdf)[1]
+            ext = os.path.split(mdf)[1].split('.')[1]
+            temp = os.path.split(img_dict['output-path'])[1].split('.')[0]
+            # print(temp)
+            # sys.exit()
+            temp = temp + '.' + ext
             shutil.copy(mdf, os.path.join(output_directory, temp))
        
         jd = tools.calc_julian_days_dg(img_dict['date'])

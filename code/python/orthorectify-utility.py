@@ -14,7 +14,7 @@ from datetime import datetime
 
 import yaml
 from osgeo import gdal
-from pandas import DataFrame
+from pandas import DataFrame, read_csv, to_datetime
 
 import tools
 import raster
@@ -25,7 +25,7 @@ with open(sys.argv[1], 'r') as fd:
     config = yaml.load(fd, Loader=yaml.Loader)
 
 ## set up input
-raw_data_dir = config['input-directory']
+raw_data_dir = config['input-data']
 format = config['input-sub-dir-format'] if 'input-sub-dir-format' in config else None
 if config['input-data-source'] == 'digital-globe':
     swath_dirs = glob.glob(os.path.join(raw_data_dir,format,''))
@@ -65,7 +65,24 @@ elif config['input-data-source'] == 'reflectance':
             swath_dict[date]['pan-tiffs-raw'].append(img) 
         if 'mul' in f_name:
             swath_dict[date]['mul-tiffs-raw'].append(img) 
-
+elif config['input-data-source'] == 'csv':
+    data = read_csv(raw_data_dir)
+    swath_dict = {}
+    for row in data.index:
+        date = to_datetime(data.loc[row]['date'])
+        type = data.loc[row]['type']
+        img =  data.loc[row]['reflectance']
+        # print(data.loc[row])
+        if date not in swath_dict:
+            swath_dict[date] = {
+                "root-path": img, 
+                'pan-tiffs-raw':[],
+                'mul-tiffs-raw':[],
+            }
+        if 'pan' in type:
+            swath_dict[date]['pan-tiffs-raw'].append(img) 
+        if 'mul' in type:
+            swath_dict[date]['mul-tiffs-raw'].append(img) 
   
     
 else:
